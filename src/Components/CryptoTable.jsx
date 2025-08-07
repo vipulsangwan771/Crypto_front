@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import { debounce } from 'lodash';
 import { Link } from 'react-router-dom';
 import { SearchIcon } from '@heroicons/react/solid';
 
-// Fallback dummy data when API fails
+// Fallback dummy data
 const fallbackData = [
   {
     coinId: 'bitcoin',
@@ -91,8 +91,6 @@ const CryptoTable = () => {
         setLoading(false);
       } catch (err) {
         console.error('Error fetching cryptos:', err);
-
-        // Use fallback
         cache.set(cacheKey, fallbackData);
         setCryptos(fallbackData);
         setIsFallback(true);
@@ -121,17 +119,17 @@ const CryptoTable = () => {
     return () => clearInterval(interval);
   }, [fetchCryptos, search, isInitialLoad]);
 
-  const handleSort = (field) => {
+  const handleSort = useCallback((field) => {
     if (field === sortField) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     } else {
       setSortField(field);
       setSortOrder('desc');
     }
-  };
+  }, [sortField, sortOrder]);
 
-  useEffect(() => {
-    const sorted = [...cryptos].sort((a, b) => {
+  const sortedCryptos = useMemo(() => {
+    return [...cryptos].sort((a, b) => {
       const aValue = a[sortField] ?? 0;
       const bValue = b[sortField] ?? 0;
       if (sortOrder === 'asc') {
@@ -139,8 +137,7 @@ const CryptoTable = () => {
       }
       return typeof bValue === 'string' ? bValue.localeCompare(aValue) : bValue - aValue;
     });
-    setCryptos(sorted);
-  }, [sortField, sortOrder]);
+  }, [cryptos, sortField, sortOrder]);
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
@@ -149,7 +146,7 @@ const CryptoTable = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 py-6 px-4">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-8xl mx-auto">
         <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
           <h1 className="text-3xl font-bold text-gray-800">Top 10 Cryptocurrencies</h1>
           <div className="relative w-full sm:w-72">
@@ -171,8 +168,41 @@ const CryptoTable = () => {
         )}
 
         {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+          <div className="bg-white shadow-2xl rounded-xl overflow-auto">
+            <table className="min-w-[768px] w-full divide-y divide-gray-200 table-auto">
+              <thead className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                <tr>
+                  {[
+                    ['name', 'Name'],
+                    ['symbol', 'Symbol'],
+                    ['currentPrice', 'Price (USD)'],
+                    ['marketCap', 'Market Cap'],
+                    ['priceChange24h', '24h Change'],
+                    ['lastUpdated', 'Last Updated'],
+                  ].map(([field, label]) => (
+                    <th
+                      key={field}
+                      onClick={() => handleSort(field)}
+                      className={`py-3 px-4 text-sm font-semibold uppercase tracking-wider cursor-pointer hover:bg-blue-700 transition text-${field === 'name' || field === 'symbol' ? 'left' : 'right'}`}
+                    >
+                      {label}
+                      {sortField === field ? ` ${sortOrder === 'asc' ? '↑' : '↓'}` : ''}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {[...Array(10)].map((_, i) => (
+                  <tr key={i} className="hover:bg-gray-50 transition">
+                    {[...Array(6)].map((_, j) => (
+                      <td key={j} className="py-3 px-4">
+                        <div className="skeleton h-4 w-full"></div>
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         ) : (
           <div className="bg-white shadow-2xl rounded-xl overflow-auto">
@@ -199,7 +229,7 @@ const CryptoTable = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {cryptos.map((crypto) => (
+                {sortedCryptos.map((crypto) => (
                   <tr key={crypto.coinId} className="hover:bg-gray-50 transition">
                     <td className="py-3 px-4 text-sm font-medium text-gray-900 whitespace-nowrap">
                       <Link to={`/chart/${crypto.coinId}`} className="text-blue-600 hover:underline">

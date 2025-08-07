@@ -1,70 +1,125 @@
-# Crypto Tracker
+# 🚀 Crypto Tracker - Frontend
 
-A full-stack cryptocurrency tracking application built with the MERN stack that fetches and displays real-time cryptocurrency data from CoinGecko API.
+This is the **frontend client** for the Crypto Tracker application. It is built using **React**, **Tailwind CSS**, and **Axios**, and communicates with a backend API that fetches real-time cryptocurrency data from the **CoinGecko API**. It displays market data and charts in a responsive UI.
 
 ## Tech Stack
-- **Frontend**: React, Tailwind CSS, Axios
-- **Backend**: Node.js, Express, MongoDB, Mongoose
-- **API**: CoinGecko API
-- **Scheduling**: node-cron
-- **Deployment**: 
-  - Frontend: Vercel
-  - Backend: Render
-  - Database: MongoDB Atlas
+
+- **Frontend**: React, Tailwind CSS, Axios  
+- **Backend**: Node.js, Express, MongoDB, Mongoose  
+- **API**: CoinGecko API  
+- **Scheduling**: node-cron  
+- **Deployment**:  
+  - **Frontend**: Vercel  
+  - **Backend**: Render  
+  - **Database**: MongoDB Atlas
+
+---
 
 ## Setup Instructions
 
 ### Prerequisites
-- Node.js (v16 or higher)
-- MongoDB Atlas account
+
+- Node.js (v16 or higher)  
+- MongoDB Atlas account  
 - Git
 
+---
+
 ### Backend Setup
+
 1. Navigate to the server directory:
-```bash
-cd server
-```
+
+   ```bash
+   cd server
+   ```
+
 2. Install dependencies:
-```bash
-npm install
-```
-3. Create a `.env` file in the server directory:
-```bash
-MONGODB_URI=your_mongodb_atlas_connection_string
-PORT=5000
-```
+
+   ```bash
+   npm install
+   ```
+
+3. Create a `.env` file in the `server/` directory:
+
+   ```
+   MONGODB_URI=your_mongodb_atlas_connection_string
+   PORT=5000
+   ```
+
 4. Start the backend server:
-```bash
-npm start
-```
+
+   ```bash
+   npm start
+   ```
+
+---
 
 ### Frontend Setup
+
 1. Navigate to the client directory:
-```bash
-cd client
-```
+
+   ```bash
+   cd client
+   ```
+
 2. Install dependencies:
-```bash
-npm install
-```
-3. Update the API URL in `client/src/components/CryptoTable.js` to point to your backend URL if not using localhost.
+
+   ```bash
+   npm install
+   ```
+
+3. Update the backend API URL in:
+
+   ```
+   client/src/components/CryptoTable.js
+   ```
+
+   Replace the default URL with your deployed backend URL if you're not using `localhost`.
+
 4. Start the frontend development server:
-```bash
-npm start
-```
+
+   ```bash
+   npm start
+   ```
+
+---
 
 ## Cron Job
-The application uses `node-cron` to schedule data fetching every hour:
-- Located in `server/jobs/cryptoJob.js`
-- Schedule: `0 * * * *` (runs every hour)
-- Fetches top 10 cryptocurrencies from CoinGecko
-- Updates current data in `Crypto` collection
-- Stores historical data in `HistoricalCrypto` collection
+
+The backend uses `node-cron` to fetch and store data every hour:
+
+- **Location**: `server/jobs/cryptoJob.js`  
+- **Schedule**: `0 * * * *` (runs every hour)  
+- **Fetches**:
+  - Top 10 cryptocurrencies from CoinGecko
+- **Stores data in**:
+  - `Crypto` collection (latest snapshot)
+  - `HistoricalCrypto` collection (hourly OHLC data)
+
+---
 
 ## Deployment
-- **Frontend**: Deployed on Vercel
-  - URL: [Add your Vercel URL]
-- **Backend**: Deployed on Render
-  - API Base URL: [Add your Render URL]
-- **Database**: MongoDB Atlas
-  - Stores two collections: `Crypto` (current data) and `HistoricalCrypto` (hourly snapshots)
+
+- **Frontend**: Vercel  
+  🔗 URL: _[Add your Vercel URL]_
+
+- **Backend**: Render  
+  🔗 API Base URL: _[Add your Render URL]_
+
+- **Database**: MongoDB Atlas  
+  📦 Collections:
+  - `Crypto` – latest market data  
+  - `HistoricalCrypto` – hourly OHLC snapshots
+
+---
+
+## Author
+
+**Vipul Sangwan**  
+GitHub: [@vipulsangwan771](https://github.com/vipulsangwan771)
+
+---
+
+## License
+
+This project is licensed under the **MIT License**.

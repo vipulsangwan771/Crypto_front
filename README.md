@@ -9,7 +9,7 @@ This is the **frontend client** for the Crypto Tracker application. It is built 
 - **API**: CoinGecko API  
 - **Scheduling**: node-cron  
 - **Deployment**:  
-  - **Frontend**: Vercel  
+  - **Frontend**: Render  
   - **Backend**: Render  
   - **Database**: MongoDB Atlas
 
@@ -49,7 +49,7 @@ This is the **frontend client** for the Crypto Tracker application. It is built 
 4. Start the backend server:
 
    ```bash
-   npm start
+   node server.js
    ```
 
 ---
@@ -89,7 +89,7 @@ This is the **frontend client** for the Crypto Tracker application. It is built 
 The backend uses `node-cron` to fetch and store data every hour:
 
 - **Location**: `server/jobs/cryptoJob.js`  
-- **Schedule**: `0 * * * *` (runs every hour)  
+- **Schedule**: `/30 * * * *` (runs every 30 minutes)  
 - **Fetches**:
   - Top 10 cryptocurrencies from CoinGecko
 - **Stores data in**:
@@ -97,19 +97,63 @@ The backend uses `node-cron` to fetch and store data every hour:
   - `HistoricalCrypto` collection (hourly OHLC data)
 
 ---
+## How the Cron Job Works
+
+
+The backend uses **node-cron** to automate cryptocurrency data fetching every **30 minutes**.  
+This ensures that the database always contains fresh market data and recent historical records without manual intervention.
+
+**Workflow**:
+
+1. **Trigger** – Every 30 minutes, `node-cron` executes the `cryptoJob.js` script.
+2. **Fetch Data** –  
+   - Calls the **CoinGecko API** to get:
+     - **Top 10 cryptocurrencies** sorted by market cap (current price, market cap, 24h change).
+     - **7-day OHLC (Open, High, Low, Close)** data for each coin.
+3. **Store Data** –  
+   - Saves **latest snapshot** in the `Crypto` collection (overwrites old data).
+   - Appends **historical records** to the `HistoricalCrypto` collection with timestamps for tracking price trends over time.
+4. **Error Handling** –  
+   - If the API call fails, logs the error without crashing the server.
+   - Retries automatically on the next scheduled run.
+5. **Usage in API** –  
+   - `GET /api/crypto` reads from the `Crypto` collection.
+   - `GET /api/crypto/historical/:coinId` reads from the `HistoricalCrypto` collection.
+
+**Schedule Expression**:  
+```javascript
+cron.schedule("*/30 * * * *", cryptoJob);
+```
 
 ## Deployment
 
 - **Frontend**: Vercel  
-  🔗 URL: _[Add your Vercel URL]_
+  🔗 URL: _https://crypto-front-8l8t.onrender.com_
 
 - **Backend**: Render  
-  🔗 API Base URL: _[Add your Render URL]_
+  🔗 API Base URL: _https://crypto-back-nmg4.onrender.com_
 
 - **Database**: MongoDB Atlas  
   📦 Collections:
   - `Crypto` – latest market data  
   - `HistoricalCrypto` – hourly OHLC snapshots
+
+---
+## 📸 Sample Database Data
+
+### Crypto Collection
+<p align="center">
+  <img src="./assets/sc1.png" width="700">
+</p>
+### Crypto Collection
+<p align="center">
+  <img src="./assets/sc3.png" width="700">
+</p>
+
+### HistoricalCrypto Collection
+<p align="center">
+  <img src="./assets/sc2.png" width="700">
+</p>
 
 ---
 

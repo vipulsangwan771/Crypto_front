@@ -9,7 +9,7 @@ This is the **frontend client** for the Crypto Tracker application. It is built 
 - **API**: CoinGecko API  
 - **Scheduling**: node-cron  
 - **Deployment**:  
-  - **Frontend**: Vercel  
+  - **Frontend**: Render  
   - **Backend**: Render  
   - **Database**: MongoDB Atlas
 
@@ -49,7 +49,7 @@ This is the **frontend client** for the Crypto Tracker application. It is built 
 4. Start the backend server:
 
    ```bash
-   npm start
+   node server.js
    ```
 
 ---
@@ -89,7 +89,7 @@ This is the **frontend client** for the Crypto Tracker application. It is built 
 The backend uses `node-cron` to fetch and store data every hour:
 
 - **Location**: `server/jobs/cryptoJob.js`  
-- **Schedule**: `0 * * * *` (runs every hour)  
+- **Schedule**: `/30 * * * *` (runs every 30 minutes)  
 - **Fetches**:
   - Top 10 cryptocurrencies from CoinGecko
 - **Stores data in**:
@@ -101,10 +101,10 @@ The backend uses `node-cron` to fetch and store data every hour:
 ## Deployment
 
 - **Frontend**: Vercel  
-  🔗 URL: _[Add your Vercel URL]_
+  🔗 URL: _https://crypto-front-8l8t.onrender.com_
 
 - **Backend**: Render  
-  🔗 API Base URL: _[Add your Render URL]_
+  🔗 API Base URL: _https://crypto-back-nmg4.onrender.com_
 
 - **Database**: MongoDB Atlas  
   📦 Collections:

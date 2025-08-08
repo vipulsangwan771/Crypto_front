@@ -145,6 +145,7 @@ cron.schedule("*/30 * * * *", cryptoJob);
 <p align="center">
   <img src="./assets/sc1.png" width="700">
 </p>
+
 ### Crypto Collection
 <p align="center">
   <img src="./assets/sc3.png" width="700">
